@@ -148,9 +148,9 @@ async function createClaim(contract: Contract): Promise<void> {
         'CreateClaim',
         claimId,
         'v-456', 
-        1, 
+        '1', 
         'ins-2', 
-        3000
+        '3000'
     );
 
     console.log('*** Transaction committed successfully');
