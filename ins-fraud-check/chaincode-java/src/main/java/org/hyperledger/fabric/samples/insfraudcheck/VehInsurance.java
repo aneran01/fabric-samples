@@ -32,7 +32,7 @@ public final class VehInsurance {
     private final String vehicleModel;
     @Property()
     private final String vehicleModelYear;
-    
+
     public String getInsuranceId() {
         return insuranceId;
     }
@@ -61,7 +61,7 @@ public final class VehInsurance {
         return vehicleModelYear;
     }
 
-    public VehInsurance(@JsonProperty("insuranceId") String insuranceId,
+    public VehInsurance(@JsonProperty("insuranceId") final String insuranceId,
             @JsonProperty("custId") final String custId,
             @JsonProperty("companyId") final String companyId,
             @JsonProperty("vin") final String vin,
