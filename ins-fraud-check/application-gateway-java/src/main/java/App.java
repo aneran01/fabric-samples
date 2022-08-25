@@ -30,7 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.cert.CertificateException;
-import java.time.Instant;
+//import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 public final class App {
@@ -116,13 +116,19 @@ public final class App {
 
 	public void run() throws GatewayException, CommitException {
 		// Initialize a set of claim data on the ledger using the chaincode 'InitLedger' function.
-		//initLedger();
+		initLedger();
 
 		// Return all the current claims on the ledger.
 		getAllClaims();
 
 		// Create a new claim on the ledger.
 		createClaim();
+
+		// Read Customer KYC info
+		readCustomerById();
+
+		// Read vehicle insurance
+		readVehInsuranceById();
 
 		// Get the claim details by claimID.
 		readClaimById();
@@ -133,13 +139,13 @@ public final class App {
 	 * the first time it was started after its initial deployment. A new version of
 	 * the chaincode deployed later would likely not need to run an "init" function.
 	 */
-	// private void initLedger() throws EndorseException, SubmitException, CommitStatusException, CommitException {
-	// 	System.out.println("\n--> Submit Transaction: InitLedger, function creates the initial set of claims on the ledger");
+	private void initLedger() throws EndorseException, SubmitException, CommitStatusException, CommitException {
+		System.out.println("\n--> Submit Transaction: InitLedger, function creates the initial set of claims on the ledger");
 
-	// 	contract.submitTransaction("InitLedger");
+		contract.submitTransaction("InitLedger");
 
-	// 	System.out.println("*** Transaction committed successfully");
-	// }
+		System.out.println("*** Transaction committed successfully");
+	}
 
 	/**
 	 * Evaluate a transaction to query ledger state.
@@ -168,7 +174,7 @@ public final class App {
 	private void createClaim() throws EndorseException, SubmitException, CommitStatusException, CommitException {
 		System.out.println("\n--> Submit Transaction: CreateClaim, creates new claim with ID, Color, Size, Owner and AppraisedValue arguments");
 
-		contract.submitTransaction("CreateClaim", "claim-1", "vehins-1", "3000", "claimstatus");
+		contract.submitTransaction("CreateClaim", "2", "vehins-2", "3000", "NEW_CLAIM");
 
 		System.out.println("*** Transaction committed successfully");
 	}
@@ -178,6 +184,22 @@ public final class App {
 		System.out.println("\n--> Evaluate Transaction: ReadClaim, function returns claim attributes");
 
 		var evaluateResult = contract.evaluateTransaction("ReadClaim", "claim-1");
+		
+		System.out.println("*** Result:" + prettyJson(evaluateResult));
+	}
+
+	private void readVehInsuranceById() throws GatewayException {
+		System.out.println("\n--> Evaluate Transaction: ReadInsurance, function returns insurance attributes");
+
+		var evaluateResult = contract.evaluateTransaction("ReadInsurance", "vehins-1");
+		
+		System.out.println("*** Result:" + prettyJson(evaluateResult));
+	}
+
+	private void readCustomerById() throws GatewayException {
+		System.out.println("\n--> Evaluate Transaction: ReadCustomer, function returns customer attributes");
+
+		var evaluateResult = contract.evaluateTransaction("ReadCustomer", "cust-1");
 		
 		System.out.println("*** Result:" + prettyJson(evaluateResult));
 	}

@@ -18,7 +18,7 @@ import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
 import com.owlike.genson.Genson;
 
 @Contract(
-        name = "basic",
+        name = "insurance",
         info = @Info(
                 title = "Vehicle Insurance Service",
                 description = "The hyperlegendary Insurance processing",
