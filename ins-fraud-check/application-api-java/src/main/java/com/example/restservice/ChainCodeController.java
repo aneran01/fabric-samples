@@ -147,7 +147,7 @@ public class ChainCodeController {
 	}
 
 	@GetMapping("/listClaimById")
-	public Claim listClaimById(@RequestParam(value = "claim-1", defaultValue = "claim-2") String claimId) throws GatewayException {
+	public Claim listClaimById(@RequestParam(value = "claim-1", defaultValue = "claim-2") String claimId) throws Exception {
 		initializeGrpcCall();
 		return readClaimById(claimId);		
 	}
