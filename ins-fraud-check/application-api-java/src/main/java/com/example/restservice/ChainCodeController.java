@@ -122,10 +122,26 @@ public class ChainCodeController {
 		}
 	}
 
-	private Claim readClaimById(String claimId) throws GatewayException {
+	private Claim readClaimById(String claimId) throws Exception {
 		System.out.println("\n--> Evaluate Transaction: ReadClaim, function returns claim attributes");
+		System.out.println("Claim ID: "+claimId);
+		ManagedChannel channel = newGrpcConnection();
+		byte[] evaluateResult;
+		Builder builder = Gateway.newInstance().identity(newIdentity()).signer(newSigner()).connection(channel)
+				// Default timeouts for different gRPC calls
+				.evaluateOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
+				.submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
 
-		byte[] evaluateResult = contract.evaluateTransaction("ReadClaim", "claim-1");
+		try (Gateway gateway = builder.connect()) {
+				Network network = gateway.getNetwork(channelName);
+				// Get the smart contract from the network.
+				contract = network.getContract(chaincodeName);
+				evaluateResult = contract.evaluateTransaction("ReadClaim", "claim-1");
+		} finally {
+			channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+		}		
 		Gson gson = new Gson();
 		Claim response = gson.fromJson(prettyJson(evaluateResult), Claim.class);
 		System.out.println("*** Result:" + prettyJson(evaluateResult));
@@ -148,7 +164,7 @@ public class ChainCodeController {
 
 	@GetMapping("/listClaimById")
 	public Claim listClaimById(@RequestParam(value = "claim-1", defaultValue = "claim-2") String claimId) throws Exception {
-		initializeGrpcCall();
+		//initializeGrpcCall();
 		return readClaimById(claimId);		
 	}
 }
