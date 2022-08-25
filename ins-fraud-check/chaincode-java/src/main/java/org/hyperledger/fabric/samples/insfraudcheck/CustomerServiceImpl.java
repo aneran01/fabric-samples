@@ -34,6 +34,7 @@ import com.owlike.genson.Genson;
 public final class CustomerServiceImpl implements ContractInterface {
 
     private final Genson genson = new Genson();
+    private final String identifier = "cust-";
 
     private enum CustomerCreationErrors {
         CUSTOMER_NOT_FOUND,
@@ -100,16 +101,18 @@ public final class CustomerServiceImpl implements ContractInterface {
         final String proofNo) {
         ChaincodeStub stub = ctx.getStub();
 
-        if (CustomerExists(ctx, custId)) {
-            String errorMessage = String.format("Customer %s already exists", custId);
+        String ID = identifier+custId;
+
+        if (CustomerExists(ctx, ID)) {
+            String errorMessage = String.format("Customer %s already exists", ID);
             System.out.println(errorMessage);
             throw new ChaincodeException(errorMessage, CustomerCreationErrors.CUSTOMER_ALREADY_EXISTS.toString());
         }
 
-        Customer customer = new Customer(custId, custFirstName, custMiddleName, custLastName, streetNo, streetName, aptSuiteUnitNo, city, state, pincode, proofType, proofNo);
+        Customer customer = new Customer(ID, custFirstName, custMiddleName, custLastName, streetNo, streetName, aptSuiteUnitNo, city, state, pincode, proofType, proofNo);
         //Use Genson to convert the Customer into string, sort it alphabetically and serialize it into a json string
         String sortedJson = genson.serialize(customer);
-        stub.putStringState(custId, sortedJson);
+        stub.putStringState(ID, sortedJson);
 
         return customer;
     }

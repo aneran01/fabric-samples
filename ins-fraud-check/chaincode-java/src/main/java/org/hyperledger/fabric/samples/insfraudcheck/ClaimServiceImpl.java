@@ -34,6 +34,7 @@ import com.owlike.genson.Genson;
 public final class ClaimServiceImpl implements ContractInterface {
 
     private final Genson genson = new Genson();
+    private final String identifier = "claim-";
 
     private enum ClaimProcessingErrors {
         CLAIM_NOT_FOUND,
@@ -48,7 +49,7 @@ public final class ClaimServiceImpl implements ContractInterface {
     @Transaction(intent = Transaction.TYPE.SUBMIT)
     public void InitLedger(final Context ctx) {
         //ChaincodeStub stub = ctx.getStub();
-        CreateClaim(ctx, "claim1661412450261", "claim1661412450261", 3000, "NEW_CLAIM");
+        CreateClaim(ctx, "1", "claim1661412450261", 3000, "NEW_CLAIM");
 
     }
 
@@ -82,16 +83,19 @@ public final class ClaimServiceImpl implements ContractInterface {
         final String insuranceId, final int claimAmount, final String claimStatus) {
         ChaincodeStub stub = ctx.getStub();
 
-        if (ClaimExists(ctx, claimID)) {
-            String errorMessage = String.format("Claim %s already exists", claimID);
+        String ID = identifier+claimID;
+        
+
+        if (ClaimExists(ctx, ID)) {
+            String errorMessage = String.format("Claim %s already exists", ID);
             System.out.println(errorMessage);
             throw new ChaincodeException(errorMessage, ClaimProcessingErrors.CLAIM_ALREADY_EXISTS.toString());
         }
 
-        Claim claim = new Claim(claimID, insuranceId, claimAmount, claimStatus);
+        Claim claim = new Claim(ID, insuranceId, claimAmount, claimStatus);
         //Use Genson to convert the Claim into string, sort it alphabetically and serialize it into a json string
         String sortedJson = genson.serialize(claim);
-        stub.putStringState(claimID, sortedJson);
+        stub.putStringState(ID, sortedJson);
 
         return claim;
     }
@@ -106,6 +110,7 @@ public final class ClaimServiceImpl implements ContractInterface {
     @Transaction(intent = Transaction.TYPE.EVALUATE)
     public Claim ReadClaim(final Context ctx, final String claimID) {
         ChaincodeStub stub = ctx.getStub();
+
         String claimJSON = stub.getStringState(claimID);
 
         if (claimJSON == null || claimJSON.isEmpty()) {
