@@ -116,7 +116,7 @@ public final class App {
 
 	public void run() throws GatewayException, CommitException {
 		// Initialize a set of claim data on the ledger using the chaincode 'InitLedger' function.
-		initLedger();
+		//initLedger();
 
 		// Return all the current claims on the ledger.
 		getAllClaims();
@@ -133,13 +133,13 @@ public final class App {
 	 * the first time it was started after its initial deployment. A new version of
 	 * the chaincode deployed later would likely not need to run an "init" function.
 	 */
-	private void initLedger() throws EndorseException, SubmitException, CommitStatusException, CommitException {
-		System.out.println("\n--> Submit Transaction: InitLedger, function creates the initial set of claims on the ledger");
+	// private void initLedger() throws EndorseException, SubmitException, CommitStatusException, CommitException {
+	// 	System.out.println("\n--> Submit Transaction: InitLedger, function creates the initial set of claims on the ledger");
 
-		contract.submitTransaction("InitLedger");
+	// 	contract.submitTransaction("InitLedger");
 
-		System.out.println("*** Transaction committed successfully");
-	}
+	// 	System.out.println("*** Transaction committed successfully");
+	// }
 
 	/**
 	 * Evaluate a transaction to query ledger state.
