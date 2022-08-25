@@ -34,6 +34,7 @@ import com.owlike.genson.Genson;
 public final class VehInsuranceServiceImpl implements ContractInterface {
 
     private final Genson genson = new Genson();
+    private final String identifier = "vehins-";
 
     private enum VehInsuranceCreationErrors {
         INSURANCE_NOT_FOUND,
@@ -93,17 +94,18 @@ public final class VehInsuranceServiceImpl implements ContractInterface {
         final String vehicleModel,
         final String vehicleModelYear) {
         ChaincodeStub stub = ctx.getStub();
+        String ID = identifier + insuranceId;
 
-        if (InsuranceExists(ctx, insuranceId)) {
-            String errorMessage = String.format("Insurance %s already exists", custId);
+        if (InsuranceExists(ctx, ID)) {
+            String errorMessage = String.format("Insurance %s already exists", ID);
             System.out.println(errorMessage);
             throw new ChaincodeException(errorMessage, VehInsuranceCreationErrors.INSURANCE_ALREADY_EXISTS.toString());
         }
 
-        VehInsurance insurance = new VehInsurance(insuranceId, custId, companyId, vin, expDate, insType, vehicleMake, vehicleModel, vehicleModelYear);
+        VehInsurance insurance = new VehInsurance(ID, custId, companyId, vin, expDate, insType, vehicleMake, vehicleModel, vehicleModelYear);
         //Use Genson to convert the Insurance into string, sort it alphabetically and serialize it into a json string
         String sortedJson = genson.serialize(insurance);
-        stub.putStringState(insuranceId, sortedJson);
+        stub.putStringState(ID, sortedJson);
 
         return insurance;
     }
