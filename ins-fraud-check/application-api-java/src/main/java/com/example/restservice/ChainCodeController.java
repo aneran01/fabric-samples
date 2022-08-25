@@ -7,6 +7,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,6 +44,7 @@ import java.security.cert.X509Certificate;
 import java.security.PrivateKey;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.*;
+import java.time.Instant;
 
 
 @RestController
@@ -175,6 +178,43 @@ public class ChainCodeController {
 		return response;
 	}
 
+	private void addCustomer(Customer customer) throws Exception {
+		System.out.println("\n--> Evaluate Transaction: ReadCustomer, function returns Customer KYC attributes");
+		String CustId = String.valueOf(Instant.now().toEpochMilli());
+		System.out.println("Customer ID: "+CustId);
+		ManagedChannel channel = newGrpcConnection();
+		byte[] evaluateResult;
+		Builder builder = Gateway.newInstance().identity(newIdentity()).signer(newSigner()).connection(channel)
+				// Default timeouts for different gRPC calls
+				.evaluateOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
+				.submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
+
+		try (Gateway gateway = builder.connect()) {
+				Network network = gateway.getNetwork(channelName);
+				// Get the smart contract from the network.
+				contract = network.getContract(chaincodeName);
+				contract.submitTransaction("CreateCustomer", 
+					CustId, 
+					customer.getCustFirstName(), 
+					customer.getCustMiddleName(),
+					customer.getCustLastName(),
+					customer.getStreetNo(),
+					customer.getStreetName(),
+					customer.getAptSuiteUnitNo(),
+					customer.getCity(),
+					customer.getState(),
+					customer.getPincode(),
+					customer.getProofType(),
+					customer.getProofNo()
+					);
+				System.out.println("*** Customer Registration completed successfully");
+		} finally {
+			channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+		}						
+	}
+
 	private String prettyJson(final byte[] json) {
 		return prettyJson(new String(json, StandardCharsets.UTF_8));
 	}
@@ -197,5 +237,11 @@ public class ChainCodeController {
 	@GetMapping("/listCustomerById")
 	public Customer listCustomerById(@RequestParam String customerId) throws Exception {
 		return readCustomerById(customerId);		
+	}
+
+	@PostMapping(value = "/registerCustomer", consumes = "application/json")
+	public void registerCustomer(@RequestBody Customer customer) throws Exception {
+		System.out.println("Registering Customer..");
+		addCustomer(customer);
 	}
 }
