@@ -18,7 +18,7 @@ import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
 import com.owlike.genson.Genson;
 
 @Contract(
-        name = "basic",
+        name = "customer",
         info = @Info(
                 title = "Customer Service",
                 description = "The hyperlegendary customer processing",
