@@ -146,11 +146,7 @@ async function createClaim(contract: Contract): Promise<void> {
 
     await contract.submitTransaction(
         'CreateClaim',
-        claimId,
-        'v-456', 
-        '1', 
-        'ins-2', 
-        '3000'
+        "claim-1", "vehins-1", "3000", "claimstatus"
     );
 
     console.log('*** Transaction committed successfully');
