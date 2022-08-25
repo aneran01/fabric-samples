@@ -70,10 +70,7 @@ public class ChainCodeController {
 	private static final String peerEndpoint = "localhost:7051";
 	private static final String overrideAuth = "peer0.org1.example.com";
 
-	private Contract contract;
-	//private final String ID = String.valueOf(Instant.now().toEpochMilli());
-	//private final String claimFullID = "claim-" + ID;
-	//private final String claimID = ID;
+	private Contract contract;	
 	private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	private void initializeGrpcCall() throws Exception {
@@ -100,7 +97,8 @@ public class ChainCodeController {
 	private static ManagedChannel newGrpcConnection() throws IOException, CertificateException {
 		BufferedReader tlsCertReader = Files.newBufferedReader(tlsCertPath);
 		X509Certificate tlsCert = Identities.readX509Certificate(tlsCertReader);
-
+		System.out.println("Peer Endpoint connected to: "+peerEndpoint);
+		System.out.println("overrideAuth: "+overrideAuth);
 		return NettyChannelBuilder.forTarget(peerEndpoint)
 				.sslContext(GrpcSslContexts.forClient().trustManager(tlsCert).build()).overrideAuthority(overrideAuth)
 				.build();
@@ -179,7 +177,7 @@ public class ChainCodeController {
 	}
 
 	private void addCustomer(Customer customer) throws Exception {
-		System.out.println("\n--> Evaluate Transaction: ReadCustomer, function returns Customer KYC attributes");
+		System.out.println("\n--> Evaluate Transaction: CreateCustomer, function to save Customer attributes in blockchain ledger");
 		String CustId = String.valueOf(Instant.now().toEpochMilli());
 		System.out.println("Customer ID: "+CustId);
 		ManagedChannel channel = newGrpcConnection();
@@ -215,6 +213,69 @@ public class ChainCodeController {
 		}						
 	}
 
+	private void addInsurance(VehInsurance insurance) throws Exception {
+		System.out.println("\n--> Evaluate Transaction: CreateInsurance, function to save Insurance attributes in blockchain ledger");
+		String insuranceId = String.valueOf(Instant.now().toEpochMilli());
+		System.out.println("Insurance ID: "+insuranceId);
+		ManagedChannel channel = newGrpcConnection();
+		byte[] evaluateResult;
+		Builder builder = Gateway.newInstance().identity(newIdentity()).signer(newSigner()).connection(channel)
+				// Default timeouts for different gRPC calls
+				.evaluateOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
+				.submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
+
+		try (Gateway gateway = builder.connect()) {
+				Network network = gateway.getNetwork(channelName);
+				// Get the smart contract from the network.
+				contract = network.getContract(chaincodeName);
+				contract.submitTransaction("CreateInsurance", 
+					insuranceId, 
+					insurance.getCustId(),
+					insurance.getCompanyId(),
+					insurance.getVin(),
+					insurance.getExpDate(),
+					insurance.getInsType(),
+					insurance.getVehicleMake(),
+					insurance.getVehicleModel(),
+					insurance.getVehicleModelYear()
+					);
+				System.out.println("*** Insurance Registration for "+insurance.getCustId()+" completed successfully");
+		} finally {
+			channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+		}						
+	}
+
+	private void addClaim(Claim claim) throws Exception {
+		System.out.println("\n--> Evaluate Transaction: CreateClaim, function to save Insurance Claim attributes in blockchain ledger");
+		String claimID = String.valueOf(Instant.now().toEpochMilli());
+		System.out.println("Claim ID: "+claimID);
+		ManagedChannel channel = newGrpcConnection();
+		byte[] evaluateResult;
+		Builder builder = Gateway.newInstance().identity(newIdentity()).signer(newSigner()).connection(channel)
+				// Default timeouts for different gRPC calls
+				.evaluateOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
+				.submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
+
+		try (Gateway gateway = builder.connect()) {
+				Network network = gateway.getNetwork(channelName);
+				// Get the smart contract from the network.
+				contract = network.getContract(chaincodeName);
+				contract.submitTransaction("CreateClaim", 
+					claimID, 
+					claim.getInsuranceId(),
+					String.valueOf(claim.getClaimAmount()),
+					claim.getClaimStatus()
+					);
+				System.out.println("*** Insurance Claim Applied for "+claim.getInsuranceId()+" completed successfully");
+		} finally {
+			channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+		}						
+	}
+
 	private String prettyJson(final byte[] json) {
 		return prettyJson(new String(json, StandardCharsets.UTF_8));
 	}
@@ -230,13 +291,13 @@ public class ChainCodeController {
 	}
 
 	@GetMapping("/listClaimById")
-	public Claim listClaimById(@RequestParam String claimId) throws Exception {
-		return readClaimById(claimId);		
+	public Claim listClaimById(@RequestParam String id) throws Exception {
+		return readClaimById(id);		
 	}
 
 	@GetMapping("/listCustomerById")
-	public Customer listCustomerById(@RequestParam String customerId) throws Exception {
-		return readCustomerById(customerId);		
+	public Customer listCustomerById(@RequestParam String id) throws Exception {
+		return readCustomerById(id);		
 	}
 
 	@PostMapping(value = "/registerCustomer", consumes = "application/json")
@@ -244,4 +305,17 @@ public class ChainCodeController {
 		System.out.println("Registering Customer..");
 		addCustomer(customer);
 	}
+
+	@PostMapping(value = "/registerInsurance", consumes = "application/json")
+	public void registerInsurance(@RequestBody VehInsurance insurance) throws Exception {
+		System.out.println("Registering Insurance for customer - "+insurance.getCustId());
+		addInsurance(insurance);
+	}
+
+	@PostMapping(value = "/registerClaim", consumes = "application/json")
+	public void registerClaim(@RequestBody Claim claim) throws Exception {
+		System.out.println("Registering Claim for Insurance no - "+claim.getInsuranceId());
+		addClaim(claim);
+	}
+
 }
