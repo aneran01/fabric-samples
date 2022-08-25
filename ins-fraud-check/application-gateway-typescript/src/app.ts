@@ -142,7 +142,7 @@ async function getAllClaims(contract: Contract): Promise<void> {
  * Submit a transaction synchronously, blocking until it has been committed to the ledger.
  */
 async function createClaim(contract: Contract): Promise<void> {
-    console.log('\n--> Submit Transaction: createClaim, creates new claim with ID, Color, Size, Owner and AppraisedValue arguments');
+    console.log('\n--> Submit Transaction: createClaim, creates new claim with vin, custid, insuranceid, claimamount arguments');
 
     await contract.submitTransaction(
         'CreateClaim',
