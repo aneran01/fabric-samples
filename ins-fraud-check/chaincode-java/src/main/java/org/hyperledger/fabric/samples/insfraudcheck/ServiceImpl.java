@@ -63,6 +63,7 @@ public final class ServiceImpl implements ContractInterface {
         //ChaincodeStub stub = ctx.getStub();
         CreateCustomer(ctx, "1", "Aniket", "Prakash", "Anerao", "Sant Namdeo Path No 2", "Gograsswadi", "A-6", "Dombivli", "Maharashtra", "421201", "PANCARD", "ABDCA4364R");
         CreateInsurance(ctx, "1", "cust-1", "comp-1", "1", "2023-12-12", "COMPREHENSIVE", "SUV", "Tata", "2022");
+        CreateInsurance(ctx, "2", "cust-1", "comp-2", "1", "2023-12-12", "COMPREHENSIVE", "SUV", "Tata", "2022");
         CreateClaim(ctx, "1", "vehins-1", 3000, "NEW_CLAIM");
     }
 
