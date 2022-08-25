@@ -138,7 +138,7 @@ public class ChainCodeController {
 				Network network = gateway.getNetwork(channelName);
 				// Get the smart contract from the network.
 				contract = network.getContract(chaincodeName);
-				evaluateResult = contract.evaluateTransaction("ReadClaim", "claim-1");
+				evaluateResult = contract.evaluateTransaction("ReadClaim", claimId);
 		} finally {
 			channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
 		}		
