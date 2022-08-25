@@ -27,7 +27,6 @@ import org.hyperledger.fabric.client.identity.Signer;
 import org.hyperledger.fabric.client.identity.Signers;
 import org.hyperledger.fabric.client.identity.X509Identity;
 import org.hyperledger.fabric.client.Gateway.Builder;
-//import org.hyperledger.fabric.client.Gateway.Network;
 import org.hyperledger.fabric.client.Network;
 
 import java.io.IOException;
@@ -149,6 +148,7 @@ public class ChainCodeController {
 
 	@GetMapping("/listClaimById")
 	public Claim listClaimById(@RequestParam(value = "claim-1", defaultValue = "claim-2") String claimId) throws GatewayException {
+		initializeGrpcCall();
 		return readClaimById(claimId);		
 	}
 }
