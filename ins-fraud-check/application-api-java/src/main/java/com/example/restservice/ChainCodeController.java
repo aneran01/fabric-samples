@@ -1,6 +1,7 @@
 package com.example.restservice;
 
 import com.example.restservice.Claim;
+import com.example.restservice.Customer;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -148,7 +149,7 @@ public class ChainCodeController {
 		return response;
 	}
 
-	private Claim readCustomerById(String customerId) throws Exception {
+	private Customer readCustomerById(String customerId) throws Exception {
 		System.out.println("\n--> Evaluate Transaction: ReadCustomer, function returns Customer KYC attributes");
 		System.out.println("Customer ID: "+customerId);
 		ManagedChannel channel = newGrpcConnection();
@@ -194,7 +195,7 @@ public class ChainCodeController {
 	}
 
 	@GetMapping("/listCustomerById")
-	public Claim listCustomerById(@RequestParam String customerId) throws Exception {
+	public Customer listCustomerById(@RequestParam String customerId) throws Exception {
 		return readCustomerById(customerId);		
 	}
 }
