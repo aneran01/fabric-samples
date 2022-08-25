@@ -36,7 +36,7 @@ public final class Customer {
     private final String proofType;
     @Property()
     private final String proofNo;
-    
+
     public String getCustId() {
         return custId;
     }
@@ -73,19 +73,19 @@ public final class Customer {
     public String getProofNo() {
         return proofNo;
     }
-    
-    public Customer(@JsonProperty("custId") String custId, 
-            @JsonProperty("custFirstName") String custFirstName, 
-            @JsonProperty("custMiddleName") String custMiddleName, 
-            @JsonProperty("custLastName") String custLastName, 
-            @JsonProperty("streetNo") String streetNo,
-            @JsonProperty("streetName") String streetName, 
-            @JsonProperty("aptSuiteUnitNo") String aptSuiteUnitNo, 
-            @JsonProperty("city") String city, 
-            @JsonProperty("state") String state, 
-            @JsonProperty("pincode") String pincode, 
-            @JsonProperty("proofType") String proofType,
-            @JsonProperty("proofNo") String proofNo) {
+
+    public Customer(@JsonProperty("custId") final String custId,
+            @JsonProperty("custFirstName") final String custFirstName,
+            @JsonProperty("custMiddleName") final String custMiddleName,
+            @JsonProperty("custLastName") final String custLastName,
+            @JsonProperty("streetNo") final String streetNo,
+            @JsonProperty("streetName") final String streetName,
+            @JsonProperty("aptSuiteUnitNo") final String aptSuiteUnitNo,
+            @JsonProperty("city") final String city,
+            @JsonProperty("state") final String state,
+            @JsonProperty("pincode") final String pincode,
+            @JsonProperty("proofType") final String proofType,
+            @JsonProperty("proofNo") final String proofNo) {
         this.custId = custId;
         this.custFirstName = custFirstName;
         this.custMiddleName = custMiddleName;
@@ -98,25 +98,6 @@ public final class Customer {
         this.pincode = pincode;
         this.proofType = proofType;
         this.proofNo = proofNo;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((aptSuiteUnitNo == null) ? 0 : aptSuiteUnitNo.hashCode());
-        result = prime * result + ((city == null) ? 0 : city.hashCode());
-        result = prime * result + ((custFirstName == null) ? 0 : custFirstName.hashCode());
-        result = prime * result + ((custId == null) ? 0 : custId.hashCode());
-        result = prime * result + ((custLastName == null) ? 0 : custLastName.hashCode());
-        result = prime * result + ((custMiddleName == null) ? 0 : custMiddleName.hashCode());
-        result = prime * result + ((pincode == null) ? 0 : pincode.hashCode());
-        result = prime * result + ((proofNo == null) ? 0 : proofNo.hashCode());
-        result = prime * result + ((proofType == null) ? 0 : proofType.hashCode());
-        result = prime * result + ((state == null) ? 0 : state.hashCode());
-        result = prime * result + ((streetName == null) ? 0 : streetName.hashCode());
-        result = prime * result + ((streetNo == null) ? 0 : streetNo.hashCode());
-        return result;
     }
 
     @Override

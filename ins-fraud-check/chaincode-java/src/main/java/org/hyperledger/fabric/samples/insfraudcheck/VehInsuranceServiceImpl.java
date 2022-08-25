@@ -82,15 +82,15 @@ public final class VehInsuranceServiceImpl implements ContractInterface {
      */
     @Transaction(intent = Transaction.TYPE.SUBMIT)
     public VehInsurance CreateInsurance(
-        final Context ctx, 
+        final Context ctx,
         final String insuranceId,
         final String custId,
-        final String companyId, 
-        final String vin, 
-        final String expDate, 
-        final String insType, 
-        final String vehicleMake, 
-        final String vehicleModel, 
+        final String companyId,
+        final String vin,
+        final String expDate,
+        final String insType,
+        final String vehicleMake,
+        final String vehicleModel,
         final String vehicleModelYear) {
         ChaincodeStub stub = ctx.getStub();
 

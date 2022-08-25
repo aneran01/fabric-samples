@@ -85,18 +85,18 @@ public final class CustomerServiceImpl implements ContractInterface {
      */
     @Transaction(intent = Transaction.TYPE.SUBMIT)
     public Customer CreateCustomer(
-        final Context ctx, 
+        final Context ctx,
         final String custId,
-        final String custFirstName, 
-        final String custMiddleName, 
-        final String custLastName, 
-        final String streetNo, 
-        final String streetName, 
-        final String aptSuiteUnitNo, 
-        final String city, 
-        final String state, 
-        final String pincode, 
-        final String proofType, 
+        final String custFirstName,
+        final String custMiddleName,
+        final String custLastName,
+        final String streetNo,
+        final String streetName,
+        final String aptSuiteUnitNo,
+        final String city,
+        final String state,
+        final String pincode,
+        final String proofType,
         final String proofNo) {
         ChaincodeStub stub = ctx.getStub();
 

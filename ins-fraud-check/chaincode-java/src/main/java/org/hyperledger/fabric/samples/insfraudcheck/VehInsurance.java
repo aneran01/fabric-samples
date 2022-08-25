@@ -61,15 +61,15 @@ public final class VehInsurance {
         return vehicleModelYear;
     }
 
-    public VehInsurance(@JsonProperty("insuranceId") String insuranceId, 
-            @JsonProperty("custId") String custId, 
-            @JsonProperty("companyId") String companyId, 
-            @JsonProperty("vin") String vin, 
-            @JsonProperty("expDate") String expDate, 
-            @JsonProperty("insType") String insType,
-            @JsonProperty("vehicleMake") String vehicleMake, 
-            @JsonProperty("vehicleModel") String vehicleModel, 
-            @JsonProperty("vehicleModelYear") String vehicleModelYear) {
+    public VehInsurance(@JsonProperty("insuranceId") String insuranceId,
+            @JsonProperty("custId") final String custId,
+            @JsonProperty("companyId") final String companyId,
+            @JsonProperty("vin") final String vin,
+            @JsonProperty("expDate") final String expDate,
+            @JsonProperty("insType") final String insType,
+            @JsonProperty("vehicleMake") final String vehicleMake,
+            @JsonProperty("vehicleModel") final String vehicleModel,
+            @JsonProperty("vehicleModelYear") final String vehicleModelYear) {
         this.insuranceId = insuranceId;
         this.custId = custId;
         this.companyId = companyId;
@@ -88,5 +88,4 @@ public final class VehInsurance {
                 + vehicleModel + ", vehicleModelYear=" + vehicleModelYear + ", vin=" + vin + "]";
     }
 
-     
 }

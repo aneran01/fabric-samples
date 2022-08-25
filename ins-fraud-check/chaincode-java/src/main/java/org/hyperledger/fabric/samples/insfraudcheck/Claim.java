@@ -39,14 +39,14 @@ public final class Claim {
     }
 
 
-    public Claim(@JsonProperty("claimID") final String claimID,         
-            @JsonProperty("insuranceId") final String insuranceId, 
+    public Claim(@JsonProperty("claimID") final String claimID,
+            @JsonProperty("insuranceId") final String insuranceId,
             @JsonProperty("claimAmount") final int claimAmount,
             @JsonProperty("claimStatus") final String claimStatus) {
-        this.claimID = claimID;        
+        this.claimID = claimID;
         this.insuranceId = insuranceId;
         this.claimAmount = claimAmount;
-        this.claimStatus = claimStatus;        
+        this.claimStatus = claimStatus;
     }
 
 
