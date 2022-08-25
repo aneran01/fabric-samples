@@ -46,7 +46,7 @@ public final class CustomerServiceImpl implements ContractInterface {
      * @param ctx the transaction context
      */
     @Transaction(intent = Transaction.TYPE.SUBMIT)
-    public void InitLedger(final Context ctx) {           
+    public void InitLedger(final Context ctx) {
         CreateCustomer(ctx, "1", "Aniket", "Prakash", "Anerao", "Sant Namdeo Path No 2", "Gograsswadi", "A-6", "Dombivli", "Maharashtra", "421201", "PANCARD", "ABDCA4364R");
     }
 

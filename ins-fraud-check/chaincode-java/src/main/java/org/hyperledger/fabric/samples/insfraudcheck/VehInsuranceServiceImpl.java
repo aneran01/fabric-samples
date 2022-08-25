@@ -46,7 +46,7 @@ public final class VehInsuranceServiceImpl implements ContractInterface {
      * @param ctx the transaction context
      */
     @Transaction(intent = Transaction.TYPE.SUBMIT)
-    public void InitLedger(final Context ctx) {        
+    public void InitLedger(final Context ctx) {
         CreateInsurance(ctx, "1", "1", "1", "1", "2023-12-12", "COMPREHENSIVE", "SUV", "Tata", "2022");
     }
 
