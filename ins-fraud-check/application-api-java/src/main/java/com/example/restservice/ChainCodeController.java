@@ -163,7 +163,7 @@ public class ChainCodeController {
 	}
 
 	@GetMapping("/listClaimById")
-	public Claim listClaimById(@RequestParam(value = "claim-1", defaultValue = "claim-2") String claimId) throws Exception {
+	public Claim listClaimById(@RequestParam String claimId) throws Exception {
 		//initializeGrpcCall();
 		return readClaimById(claimId);		
 	}
