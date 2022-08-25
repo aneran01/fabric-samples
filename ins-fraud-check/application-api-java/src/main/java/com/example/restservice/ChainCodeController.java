@@ -148,6 +148,32 @@ public class ChainCodeController {
 		return response;
 	}
 
+	private Claim readCustomerById(String customerId) throws Exception {
+		System.out.println("\n--> Evaluate Transaction: ReadCustomer, function returns Customer KYC attributes");
+		System.out.println("Customer ID: "+customerId);
+		ManagedChannel channel = newGrpcConnection();
+		byte[] evaluateResult;
+		Builder builder = Gateway.newInstance().identity(newIdentity()).signer(newSigner()).connection(channel)
+				// Default timeouts for different gRPC calls
+				.evaluateOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
+				.submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
+
+		try (Gateway gateway = builder.connect()) {
+				Network network = gateway.getNetwork(channelName);
+				// Get the smart contract from the network.
+				contract = network.getContract(chaincodeName);
+				evaluateResult = contract.evaluateTransaction("ReadCustomer", customerId);
+		} finally {
+			channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+		}		
+		Gson gson = new Gson();
+		Customer response = gson.fromJson(prettyJson(evaluateResult), Customer.class);
+		System.out.println("*** Result:" + prettyJson(evaluateResult));
+		return response;
+	}
+
 	private String prettyJson(final byte[] json) {
 		return prettyJson(new String(json, StandardCharsets.UTF_8));
 	}
@@ -164,7 +190,11 @@ public class ChainCodeController {
 
 	@GetMapping("/listClaimById")
 	public Claim listClaimById(@RequestParam String claimId) throws Exception {
-		//initializeGrpcCall();
 		return readClaimById(claimId);		
+	}
+
+	@GetMapping("/listCustomerById")
+	public Claim listCustomerById(@RequestParam String customerId) throws Exception {
+		return readCustomerById(customerId);		
 	}
 }
