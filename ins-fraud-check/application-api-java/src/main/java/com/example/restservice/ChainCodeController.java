@@ -416,7 +416,7 @@ public class ChainCodeController {
 	}
 
 	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
-	@GetMapping("/listAllVehInsuranceDtls")
+	@GetMapping("/listAllClaimDtls")
 	public List<Claim> listAllClaimDtls() throws Exception {
 		return readAllClaimDetails();		
 	}
