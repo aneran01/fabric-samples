@@ -347,7 +347,7 @@ public class ChainCodeController {
 		addClaim(claim);
 	}
 
-	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://localhost"})
+	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244"})
 	@GetMapping("/listAllCustomersKYC")
 	public List<Customer> listAllCustomersKYC() throws Exception {
 		return readAllCustomers();		
