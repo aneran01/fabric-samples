@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -346,6 +347,7 @@ public class ChainCodeController {
 		addClaim(claim);
 	}
 
+	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://localhost"})
 	@GetMapping("/listAllCustomersKYC")
 	public List<Customer> listAllCustomersKYC() throws Exception {
 		return readAllCustomers();		
