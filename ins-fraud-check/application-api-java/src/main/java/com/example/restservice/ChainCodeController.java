@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
@@ -44,6 +45,7 @@ import java.security.cert.X509Certificate;
 import java.security.PrivateKey;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.*;
+import java.util.List;
 import java.time.Instant;
 
 
@@ -174,6 +176,32 @@ public class ChainCodeController {
 		Customer response = gson.fromJson(prettyJson(evaluateResult), Customer.class);
 		System.out.println("*** Result:" + prettyJson(evaluateResult));
 		return response;
+	}
+
+	private List<Customer> readAllCustomers() throws Exception {
+		System.out.println("\n--> Evaluate Transaction: GetAllCustomers, function returns all Customers KYC attributes");
+		ManagedChannel channel = newGrpcConnection();
+		byte[] evaluateResult;
+		Builder builder = Gateway.newInstance().identity(newIdentity()).signer(newSigner()).connection(channel)
+				// Default timeouts for different gRPC calls
+				.evaluateOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
+				.submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
+
+		try (Gateway gateway = builder.connect()) {
+				Network network = gateway.getNetwork(channelName);
+				// Get the smart contract from the network.
+				contract = network.getContract(chaincodeName);
+				evaluateResult = contract.evaluateTransaction("GetAllCustomers");
+		} finally {
+			channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+		}		
+		Gson gson = new Gson();
+		//Customer response = gson.fromJson(prettyJson(evaluateResult), Customer.class);		
+		List<Customer> customerList = gson.fromJson(prettyJson(evaluateResult), new TypeToken<List<Customer>>(){}.getType());
+		System.out.println("*** Result:" + prettyJson(evaluateResult));
+		return customerList;
 	}
 
 	private void addCustomer(Customer customer) throws Exception {
@@ -316,6 +344,11 @@ public class ChainCodeController {
 	public void registerClaim(@RequestBody Claim claim) throws Exception {
 		System.out.println("Registering Claim for Insurance no - "+claim.getInsuranceId());
 		addClaim(claim);
+	}
+
+	@GetMapping("/listAllCustomersKYC")
+	public List<Customer> listAllCustomersKYC() throws Exception {
+		return readAllCustomers();		
 	}
 
 }
