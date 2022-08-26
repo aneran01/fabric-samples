@@ -205,6 +205,56 @@ public class ChainCodeController {
 		return customerList;
 	}
 
+	private List<VehInsurance> readAllVehInsurance() throws Exception {
+		System.out.println("\n--> Evaluate Transaction: GetAllInsurance, function returns all Vehicle Insurance details attributes");
+		ManagedChannel channel = newGrpcConnection();
+		byte[] evaluateResult;
+		Builder builder = Gateway.newInstance().identity(newIdentity()).signer(newSigner()).connection(channel)
+				// Default timeouts for different gRPC calls
+				.evaluateOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
+				.submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
+
+		try (Gateway gateway = builder.connect()) {
+				Network network = gateway.getNetwork(channelName);
+				// Get the smart contract from the network.
+				contract = network.getContract(chaincodeName);
+				evaluateResult = contract.evaluateTransaction("GetAllInsurance");
+		} finally {
+			channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+		}		
+		Gson gson = new Gson();		
+		List<VehInsurance> vehInsuranceList = gson.fromJson(prettyJson(evaluateResult), new TypeToken<List<VehInsurance>>(){}.getType());
+		System.out.println("*** Result:" + prettyJson(evaluateResult));
+		return vehInsuranceList;
+	}
+
+	private List<Claim> readAllClaimDetails() throws Exception {
+		System.out.println("\n--> Evaluate Transaction: GetAllClaims, function returns all Vehicle Insurance details attributes");
+		ManagedChannel channel = newGrpcConnection();
+		byte[] evaluateResult;
+		Builder builder = Gateway.newInstance().identity(newIdentity()).signer(newSigner()).connection(channel)
+				// Default timeouts for different gRPC calls
+				.evaluateOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
+				.submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+				.commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
+
+		try (Gateway gateway = builder.connect()) {
+				Network network = gateway.getNetwork(channelName);
+				// Get the smart contract from the network.
+				contract = network.getContract(chaincodeName);
+				evaluateResult = contract.evaluateTransaction("GetAllClaims");
+		} finally {
+			channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+		}		
+		Gson gson = new Gson();		
+		List<Claim> claimList = gson.fromJson(prettyJson(evaluateResult), new TypeToken<List<Claim>>(){}.getType());
+		System.out.println("*** Result:" + prettyJson(evaluateResult));
+		return claimList;
+	}
+
 	private void addCustomer(Customer customer) throws Exception {
 		System.out.println("\n--> Evaluate Transaction: CreateCustomer, function to save Customer attributes in blockchain ledger");
 		String CustId = String.valueOf(Instant.now().toEpochMilli());
@@ -357,6 +407,18 @@ public class ChainCodeController {
 	@GetMapping("/listAllCustomersKYC")
 	public List<Customer> listAllCustomersKYC() throws Exception {
 		return readAllCustomers();		
+	}
+
+	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
+	@GetMapping("/listAllVehInsuranceDtls")
+	public List<VehInsurance> listAllVehInsuranceDtls() throws Exception {
+		return readAllVehInsurance();		
+	}
+
+	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
+	@GetMapping("/listAllVehInsuranceDtls")
+	public List<Claim> listAllClaimDtls() throws Exception {
+		return readAllClaimDetails();		
 	}
 
 }
