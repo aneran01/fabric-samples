@@ -314,40 +314,46 @@ public class ChainCodeController {
 		return gson.toJson(parsedJson);
 	}
 
+	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
 	@GetMapping("/greeting")
 	public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
 		return new Greeting(counter.incrementAndGet(), String.format(template, name));
 	}
 
+	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
 	@GetMapping("/listClaimById")
 	public Claim listClaimById(@RequestParam String id) throws Exception {
 		return readClaimById(id);		
 	}
 
+	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
 	@GetMapping("/listCustomerById")
 	public Customer listCustomerById(@RequestParam String id) throws Exception {
 		return readCustomerById(id);		
 	}
 
+	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
 	@PostMapping(value = "/registerCustomer", consumes = "application/json")
 	public void registerCustomer(@RequestBody Customer customer) throws Exception {
 		System.out.println("Registering Customer..");
 		addCustomer(customer);
 	}
 
+	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
 	@PostMapping(value = "/registerInsurance", consumes = "application/json")
 	public void registerInsurance(@RequestBody VehInsurance insurance) throws Exception {
 		System.out.println("Registering Insurance for customer - "+insurance.getCustId());
 		addInsurance(insurance);
 	}
 
+	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
 	@PostMapping(value = "/registerClaim", consumes = "application/json")
 	public void registerClaim(@RequestBody Claim claim) throws Exception {
 		System.out.println("Registering Claim for Insurance no - "+claim.getInsuranceId());
 		addClaim(claim);
 	}
 
-	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244"})
+	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
 	@GetMapping("/listAllCustomersKYC")
 	public List<Customer> listAllCustomersKYC() throws Exception {
 		return readAllCustomers();		
