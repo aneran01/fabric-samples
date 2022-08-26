@@ -364,7 +364,7 @@ public class ChainCodeController {
 		return gson.toJson(parsedJson);
 	}
 
-	@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
+	//@CrossOrigin(origins = {"http://66.241.32.168:3000", "http://20.115.96.244", "http://localhost:3000"})
 	@GetMapping("/greeting")
 	public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
 		return new Greeting(counter.incrementAndGet(), String.format(template, name));
